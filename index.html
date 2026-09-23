@@ -68,6 +68,17 @@
     outline: 3px solid var(--accent);
     outline-offset: 2px;
   }
+  .examples { color: var(--muted); font-size: 0.9rem; margin: 1.25rem 0 0; }
+  button.example {
+    font-size: 0.9rem;
+    font-weight: 400;
+    padding: 0.15rem 0.5rem;
+    margin: 0.25rem 0.25rem 0 0;
+    background: transparent;
+    color: var(--accent);
+    border: 1px solid var(--line);
+  }
+  button.example:hover { border-color: var(--accent); }
   #status { color: var(--muted); min-height: 1.5rem; margin: 1rem 0 0.5rem; }
   #references {
     background: var(--paper);
@@ -97,12 +108,20 @@
   <p class="intro">Paste one or more DOIs, one per line. The tool returns each reference in APA 7th edition style, ready to copy.</p>
 
   <label for="dois">DOIs or DOI links</label>
-  <textarea id="dois" placeholder="10.1016/j.jbusvent.2019.105932&#10;https://doi.org/10.1111/etap.12188"></textarea>
+  <textarea id="dois" placeholder="10.2307/1879431&#10;https://doi.org/10.1016/0304-405X(76)90026-X"></textarea>
 
   <div class="actions">
     <button id="format">Format references</button>
     <button id="copy" disabled>Copy references</button>
   </div>
+
+  <p class="examples">Try an example
+    <button class="example" data-doi="10.2307/1879431">Akerlof (1970)</button>
+    <button class="example" data-doi="10.2307/1882010">Spence (1973)</button>
+    <button class="example" data-doi="10.1016/0304-405X(76)90026-X">Jensen and Meckling (1976)</button>
+    <button class="example" data-doi="10.1111/j.1540-6261.1970.tb00518.x">Fama (1970)</button>
+    <button class="example" data-doi="10.1038/nature14539">LeCun et al. (2015)</button>
+  </p>
 
   <p id="status" aria-live="polite"></p>
   <div id="references"></div>
@@ -187,6 +206,15 @@
     }
     await navigator.clipboard.writeText(texts.join("\n\n"));
     statusLine.textContent = "Copied " + texts.length + " reference" + (texts.length > 1 ? "s" : "") + ".";
+  }
+
+  // Clicking an example fills the box and formats it
+  const exampleButtons = document.querySelectorAll("button.example");
+  for (const button of exampleButtons) {
+    button.addEventListener("click", function () {
+      input.value = button.dataset.doi;
+      formatAll();
+    });
   }
 
   formatButton.addEventListener("click", formatAll);
